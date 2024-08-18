@@ -1,13 +1,15 @@
 import math
+import random
+
 import matplotlib.pyplot as plt
 import numpy as np
 from mpmath import *
 
 fs = 1000000.0
-f0 = 100.0
+f0 = 10000.0
 phi0 = 0.0
 
-PERIODS = 27
+PERIODS = 9
 
 omega = 2.0 * f0 * math.pi
 k = 155.00
@@ -57,9 +59,7 @@ fillwavelet(kmin)
 Sum = sum(wavre)
 print('wavre:', Sum)
 
-# plt.plot(times, wavre)
-# plt.plot(times, wavim)
-# plt.show()
+
 
 findk(kmin)
 for i in range(5):
@@ -70,8 +70,34 @@ for i in range(5):
 
 fillwavelet(kminarg)
 
+plt.plot(times, wavre)
+plt.plot(times, wavim)
+plt.show()
+
+phases = []
+deltas = []
+
+
+def demo_sin():
+    times = []
+    samples = []
+    for j in range(0, (round(PERIODS * fs / f0))):
+        x = round(255 * math.cos(2.0 * math.pi * (j - (round(PERIODS / 2 * fs / f0))) * f0 / fs - phi))
+        # x = x + random.randint(-30, 30)
+        if (random.randint(0, 100) < 3) :
+            x = random.randint(-255, 255)
+        times.append(j)
+        samples.append(x)
+    plt.plot(times, samples)
+    plt.show()
+
+demo_sin()
 
 def test_phase():
+    global phases
+    global deltas
+    phases = []
+    deltas = []
     delta_sqr = 0.0
     for i in range(90):
         phi = i * math.pi / 180
@@ -89,6 +115,8 @@ def test_phase():
         delta = phase - phi
         delta_sqr += sqrt(delta * delta / 90)
         print(i, delta)
+        phases.append(i)
+        deltas.append(delta)
     print("Sum of delta sqr = ", delta_sqr)
 
 def test_phase_fourier():
@@ -127,5 +155,9 @@ def test_phase_fourier():
 # plt.plot(wavk, wavsum)
 # plt.show()
 
-#test_phase()
-test_phase_fourier()
+test_phase()
+
+plt.plot(phases, deltas)
+plt.show()
+
+#test_phase_fourier()
